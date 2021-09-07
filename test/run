@@ -1,0 +1,5 @@
+#!/usr/bin/ruby
+
+require 'test/unit'
+require 'test/term_menu'
+require 'test/meta_def'
