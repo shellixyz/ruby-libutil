@@ -12,26 +12,34 @@ class String
   # "abc".autocomplete("abcd", "bcd", "abc-cef") = "abcd"
   # "b".autocomplete("abcd", "bcd", "abc-cef") = "bcd"
   def autocomplete(*list)
-    word = self
-    exact_match = false
-    matchs = list.find_all do |lword|
-      lword = lword.to_s
-      if lword == word then
-	exact_match = true
-	break
+      word = self
+      exact_match = false
+      exact_shortcut = nil
+      matchs = list.find_all do |lword|
+          lword = lword.to_s
+          if lword == word then
+	            exact_match = true
+	            break
+          end
+          if lword[0...word.length] == word then
+	            true
+          else
+	            shortcut = lword.split('-').map { |part| part[0].chr }.join
+              if shortcut == word
+                  exact_shortcut = lword
+                  break
+              else
+                  shortcut[0...word.length] == word
+              end
+          end
       end
-      if lword[0...word.length] == word then
-	true
+      if exact_match then
+          [ word.to_sym ]
+      elsif exact_shortcut
+          [ exact_shortcut ]
       else
-	shortcut = lword.split('-').map { |part| part[0].chr }.join
-	shortcut[0...word.length] == word
+          matchs.map { |m| m.to_sym }
       end
-    end
-    if exact_match then
-      [ word.to_sym ]
-    else
-      matchs.map { |m| m.to_sym }
-    end
   end
 
   # return all the elements
